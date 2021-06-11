@@ -66,13 +66,32 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 #### how to start nestjs
 https://www.youtube.com/watch?v=9ytzGCAScHY&list=PLlameCF3cMEt_PfXxVRT8_VckugrPBI-G&index=2
 #### how to allow hot reloading in your application
-<h5>*it does not come preinstalled</h5>
+##### 1. *it does not come preinstalled <br>
 https://www.youtube.com/watch?v=CLKLadj374A
 ```bash
 # allow hot reloading to work on project
 npm install ts-node-dev --save-dev
 
 ```
+##### 2. install mysql driver by going to the website
+- https://www.youtube.com/watch?v=-BDbOOY9jsc
+- https://dev.mysql.com/downloads/mysql/
+##### 3. install mysql into project <br>
+```bash
+# allow hot reloading to work on project
+npm install ts-node-dev --save-dev
+
+```
+- npm install --save @nestjs/typeorm typeorm mysql2
+
+## creating new module / controller / services
+```bash
+# allow hot reloading to work on project
+nest g module product
+nest g service product
+nest g controller product
+```
+
 ## Stay in touch
 
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
