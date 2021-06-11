@@ -63,9 +63,16 @@ $ npm run test:cov
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
 ## how to setup project
-
+#### how to start nestjs
 https://www.youtube.com/watch?v=9ytzGCAScHY&list=PLlameCF3cMEt_PfXxVRT8_VckugrPBI-G&index=2
+#### how to allow hot reloading in your application
+<h5>*it does not come preinstalled</h5>
+https://www.youtube.com/watch?v=CLKLadj374A
+```bash
+# allow hot reloading to work on project
+npm install ts-node-dev --save-dev
 
+```
 ## Stay in touch
 
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
