@@ -7,7 +7,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    //alopp
+    //write documentation here
     return this.appService.getHello();
   }
 }
