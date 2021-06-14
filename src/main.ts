@@ -1,9 +1,15 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import {NestFactory} from '@nestjs/core';
+import {AppModule} from './app.module'
+import initDB from "./database_init";
+
 const config = require( 'config');
 const cors = require("cors");
 
+
 async function bootstrap() {
+  initDB();
+  initDB();
+
   const app = await NestFactory.create(AppModule);
   app.use(function (req, res, next ) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -16,4 +22,5 @@ async function bootstrap() {
   const port_number = config.app.port;
   await app.listen(port_number);
 }
+
 bootstrap();
