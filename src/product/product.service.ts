@@ -12,8 +12,7 @@ export class ProductService {
     ) {
     }
 
-    async getAllProducts(): Promise<ProductDto[]> {
-        const products: Product[] = await this.productRepository.find();
+    private mapToProductDTO(products: Product[]) {
         const result: ProductDto[] = products.map((product: Product) =>
             new ProductDto(
                 product.id,
@@ -25,16 +24,15 @@ export class ProductService {
         return result;
     }
 
+    async getAllProducts(): Promise<ProductDto[]> {
+        const products: Product[] = await this.productRepository.find();
+        const result = this.mapToProductDTO(products);
+        return result;
+    }
+
     async getManyProductBy(query: FindManyOptions<Product>) : Promise<ProductDto[]> {
         const products: Product[] = await this.productRepository.find(query);
-        const result: ProductDto[] = products.map((product: Product) =>
-            new ProductDto(
-                product.id,
-                product.name,
-                product.description,
-                parseFloat(product.price.toString())
-            )
-        );
+        const result: ProductDto[] = this.mapToProductDTO(products);
         return result;
     }
 
