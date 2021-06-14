@@ -33,10 +33,10 @@ function initDB() {
         //4. create table
         const create_table_query = `
         CREATE TABLE ${table_name} (
-         id    INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+         id    INT  NOT NULL AUTO_INCREMENT,
          name  CHAR(60)      NOT NULL DEFAULT '',
-         description  VARCHAR(500)   NOT NULL DEFAULT '',
-         price     DECIMAL UNSIGNED  NOT NULL DEFAULT 0.00,
+         description  VARCHAR(200)   NOT NULL DEFAULT '',
+         price     DECIMAL(8,2)  NOT NULL DEFAULT 0.00,
          PRIMARY KEY  (id));
         `;
         con.query(create_table_query, function (err, result) {
@@ -46,10 +46,8 @@ function initDB() {
         fs.createReadStream(config.dataset_filename)
             .pipe(csv())
             .on('data', (row) => {
-                row.id = parseInt(row.id);
-                row.price = parseFloat(row.price);
                 const sql_query = "INSERT INTO product (id,name,description,price) " +
-                    `VALUES ("${row.id}","${row.name}","${row.description}",${row.price})`;
+                    `VALUES ("${row.id}","${row.name}","${row.description}","${row.price}")`;
                 con.query(sql_query, function (err, result) {
                     if (err) throw err;
                 });

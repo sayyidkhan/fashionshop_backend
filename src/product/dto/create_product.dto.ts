@@ -1,13 +1,11 @@
-export class ProductDto {
+export class Create_productDto {
 
-    constructor(id: number, name: string, description: string, price: number) {
-        this.id = id;
+    constructor(name: string, description: string, price: number) {
         this.name = name;
         this.description = description;
         this.price = price;
     }
 
-    id : number;
     name : string;
     description : string;
     price : number;
