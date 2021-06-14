@@ -8,5 +8,6 @@ module.exports = {
         username :  "root",
         password : "rootroot",
         database : "fashionshop"
-    }
+    },
+    dataset_filename : "clothing_dataset.csv"
 }

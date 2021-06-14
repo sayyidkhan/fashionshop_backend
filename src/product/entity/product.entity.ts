@@ -5,13 +5,13 @@ export class Product {
     @PrimaryGeneratedColumn()
     id : number;
 
-    @Column()
+    @Column('varchar',{length : 60})
     name : string;
 
-    @Column()
+    @Column('varchar',{length : 500, default : ''})
     description : string;
 
-    @Column()
-    price : string;
+    @Column('decimal',{default : 0.00})
+    price : number;
 
 }

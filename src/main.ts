@@ -8,7 +8,6 @@ const cors = require("cors");
 
 async function bootstrap() {
   initDB();
-  initDB();
 
   const app = await NestFactory.create(AppModule);
   app.use(function (req, res, next ) {
