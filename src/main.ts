@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-
+const config = require( 'config');
 const cors = require("cors");
 
 async function bootstrap() {
@@ -13,6 +13,7 @@ async function bootstrap() {
 
   app.use(cors({ origin: true }));
 
-  await app.listen(5000);
+  const port_number = config.app.port;
+  await app.listen(port_number);
 }
 bootstrap();
