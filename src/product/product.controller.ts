@@ -33,19 +33,41 @@ export class ProductController {
     @Get()
     async getAllProducts(): Promise<Promise<ProductDTO[]>> {
         const result: ProductDTO[] = await this.getAllProductsSortBy("name","asc");
-        if(result.length === 0) {
-            const errorMsg = "No record found";
-            throw new HttpException(
-                errorMsg,
-                HttpStatus.BAD_REQUEST
-            );
+        if(result.length !== 0) {
+            return result;
         }
-        return result;
+        const errorMsg = "No record found";
+        throw new HttpException(
+            errorMsg,
+            HttpStatus.BAD_REQUEST
+        );
     }
 
+    @ApiOperation({
+        summary: 'Insert a new Product listing',
+        description: "Product Object that needs to be added to the product listing",
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Product successfully created.',
+        type: ProductDTO,
+    })
+    @ApiResponse({
+        status: 400,
+        description: "Invalid Input",
+    })
     @Post()
     async createNewProduct(@Body() productDto : CreateProductDTO) {
-        return this.productService.createNewProduct(productDto);
+        const new_product = await this.productService.createNewProduct(productDto);
+        if(new_product !== null) {
+            const result = new ProductDTO(new_product.id,new_product.name,new_product.description,new_product.price);
+            return result;
+        }
+        const errorMsg = "Invalid Input";
+        throw new HttpException(
+            errorMsg,
+            HttpStatus.BAD_REQUEST
+        );
     }
 
     //pure sorting of all products (sorting only)
