@@ -83,6 +83,7 @@ npm install --save @nestjs/typeorm typeorm mysql2
 
 ```
 
+
 ## creating new module / controller / services
 ```bash
 # allow hot reloading to work on project
