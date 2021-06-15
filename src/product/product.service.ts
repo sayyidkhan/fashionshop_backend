@@ -29,26 +29,35 @@ export class ProductService {
 
     async getAllProducts(): Promise<ProductDTO[]> {
         const products: Product[] = await this.productRepository.find();
-        const result = this.mapToProductDTO(products);
-        return result;
+        if(products !== undefined){
+            const result: ProductDTO[] = this.mapToProductDTO(products);
+            return result;
+        }
+        return null;
     }
 
     async getManyProductBy(query: FindManyOptions<Product>) : Promise<ProductDTO[]> {
         const products: Product[] = await this.productRepository.find(query);
-        const result: ProductDTO[] = this.mapToProductDTO(products);
-        return result;
+        if(products !== undefined){
+            const result: ProductDTO[] = this.mapToProductDTO(products);
+            return result;
+        }
+        return null;
     }
 
 
     async getOneProduct(query: FindManyOptions<Product>) : Promise<ProductDTO> {
         const product: Product = await this.productRepository.findOne(query);
-        const result: ProductDTO = new ProductDTO(
+        if(product !== undefined) {
+            const result: ProductDTO = new ProductDTO(
                 product.id,
                 product.name,
                 product.description,
                 parseFloat(product.price.toString())
-        );
-        return result;
+            );
+            return result;
+        }
+        return null;
     }
 
     async createNewProduct(productDto : CreateProductDTO) : Promise<Product> {

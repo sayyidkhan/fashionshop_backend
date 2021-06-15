@@ -100,10 +100,6 @@ export class ProductController {
         description: 'Displays a list of all the products from the database sorted by choice(s) selected',
         type: [ProductDTO],
     })
-    @ApiResponse({
-        status: 400,
-        description: "Invalid Column Input",
-    })
     @Get("/sort_by")
     async getProductsByCategoryAndSortBy(
         @Query("orderby_name") orderby_name ?: string,
