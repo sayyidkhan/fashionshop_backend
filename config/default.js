@@ -9,5 +9,13 @@ module.exports = {
         password : "rootroot",
         database : "fashionshop"
     },
-    dataset_filename : "clothing_dataset.csv"
+    dataset_filename : "clothing_dataset.csv",
+    swaggerOptions : {
+        title : "FashionShop Backend API",
+        description : "API for backend catalog",
+        version: "1.0",
+        product_api : "Product API",
+        pagination_api : "Product Pagination API",
+        swagger_api_url : "swagger-ui",
+    }
 }

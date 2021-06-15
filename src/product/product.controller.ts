@@ -1,16 +1,51 @@
-import {Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Param, Post} from '@nestjs/common';
 import {ProductService} from "./product.service";
-import {ProductDto} from "./dto/product.dto";
-import {Create_productDto} from "./dto/create_product.dto";
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import {ProductDTO} from "./dto/productDTO";
+import {CreateProductDTO} from "./dto/createProductDTO";
+const config = require( 'config');
 
+@ApiBearerAuth()
+@ApiTags(config.swaggerOptions.product_api)
 @Controller('product')
 export class ProductController {
     constructor(private readonly productService : ProductService) {}
 
-    //default on page load, sort all content by title from [A - Z]
+
+    @ApiOperation({
+        summary: 'Get All Products from the database',
+        description: "No parameters are required to be passed in order to use this api",
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Displays a list of all the products from the database sorted by title from [A - Z].',
+        type: [ProductDTO],
+    })
+    @ApiResponse({
+        status: 400,
+        description: "No record found",
+    })
     @Get()
-    async getAllProducts() {
-        return this.getAllProductsSortBy("title","asc");
+    async getAllProducts(): Promise<Promise<ProductDTO[]>> {
+        const result: ProductDTO[] = await this.getAllProductsSortBy("name","asc");
+        if(result.length === 0) {
+            const errorMsg = "No record found";
+            throw new HttpException(
+                errorMsg,
+                HttpStatus.BAD_REQUEST
+            );
+        }
+        return result;
+    }
+
+    @Post()
+    async createNewProduct(@Body() productDto : CreateProductDTO) {
+        return this.productService.createNewProduct(productDto);
     }
 
     //pure sorting of all products (sorting only)
@@ -31,9 +66,5 @@ export class ProductController {
         });
     }
 
-    @Post()
-    async createNewProduct(@Body() productDto : Create_productDto) {
-        return this.productService.createNewProduct(productDto);
-    }
 
 }

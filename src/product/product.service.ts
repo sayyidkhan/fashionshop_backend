@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {Product} from "./entity/product.entity";
 import {FindManyOptions, Repository} from "typeorm";
 import {InjectRepository} from '@nestjs/typeorm';
-import {ProductDto} from "./dto/product.dto";
-import {Create_productDto} from "./dto/create_product.dto";
+import {ProductDTO} from "./dto/productDTO";
+import {CreateProductDTO} from "./dto/createProductDTO";
 
 @Injectable()
 export class ProductService {
@@ -13,8 +13,8 @@ export class ProductService {
     }
 
     private mapToProductDTO(products: Product[]) {
-        const result: ProductDto[] = products.map((product: Product) =>
-            new ProductDto(
+        const result: ProductDTO[] = products.map((product: Product) =>
+            new ProductDTO(
                 product.id,
                 product.name,
                 product.description,
@@ -24,22 +24,22 @@ export class ProductService {
         return result;
     }
 
-    async getAllProducts(): Promise<ProductDto[]> {
+    async getAllProducts(): Promise<ProductDTO[]> {
         const products: Product[] = await this.productRepository.find();
         const result = this.mapToProductDTO(products);
         return result;
     }
 
-    async getManyProductBy(query: FindManyOptions<Product>) : Promise<ProductDto[]> {
+    async getManyProductBy(query: FindManyOptions<Product>) : Promise<ProductDTO[]> {
         const products: Product[] = await this.productRepository.find(query);
-        const result: ProductDto[] = this.mapToProductDTO(products);
+        const result: ProductDTO[] = this.mapToProductDTO(products);
         return result;
     }
 
 
-    async getOneProduct(query: FindManyOptions<Product>) : Promise<ProductDto> {
+    async getOneProduct(query: FindManyOptions<Product>) : Promise<ProductDTO> {
         const product: Product = await this.productRepository.findOne(query);
-        const result: ProductDto = new ProductDto(
+        const result: ProductDTO = new ProductDTO(
                 product.id,
                 product.name,
                 product.description,
@@ -48,7 +48,7 @@ export class ProductService {
         return result;
     }
 
-    async createNewProduct(productDto : Create_productDto) : Promise<Product> {
+    async createNewProduct(productDto : CreateProductDTO) : Promise<Product> {
         const name = productDto.name;
         const description = productDto.description;
         const price = productDto.price;

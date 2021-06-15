@@ -92,6 +92,13 @@ nest g service product
 nest g controller product
 ```
 
+## install swagger for API documentation
+https://www.youtube.com/watch?v=lsKZ4yBWVnk
+```bash
+# allow hot reloading to work on project
+npm install --save @nestjs/swagger
+```
+
 ## Stay in touch
 
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
