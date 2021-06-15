@@ -1,10 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProductController } from './product.controller';
+import {Test, TestingModule} from '@nestjs/testing';
+import {ProductController} from './product.controller';
 import {HttpModule, HttpService, INestApplication} from "@nestjs/common";
 import {ProductService} from "./product.service";
 import {ProductModule} from "./product.module";
 import * as request from 'supertest';
-import {Product} from "./entity/product.entity";
 import {ProductDTO} from "./dto/productDTO";
 import {AppModule} from "../app.module";
 
@@ -22,11 +21,12 @@ describe('ProductController', () => {
   let app : INestApplication;
   let productService: ProductService;
   let httpService : HttpService;
+  let testAppModule : TestingModule;
 
   const mockGetManyProductBy = jest.fn();
 
   beforeEach(async () => {
-    const testAppModule: TestingModule = await Test.createTestingModule({
+    testAppModule = await Test.createTestingModule({
       imports: [
           ProductModule,
           AppModule,
@@ -52,6 +52,11 @@ describe('ProductController', () => {
   afterEach(async () => {
     app = null;
     httpService = null;
+  });
+
+  afterAll(async () => {
+    //close test module preventing memory leaks
+    await testAppModule.close();
   });
 
   it('get All products', async () => {

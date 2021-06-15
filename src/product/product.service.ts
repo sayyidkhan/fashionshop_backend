@@ -13,15 +13,18 @@ export class ProductService {
     }
 
     private mapToProductDTO(products: Product[]) {
-        const result: ProductDTO[] = products.map((product: Product) =>
-            new ProductDTO(
-                product.id,
-                product.name,
-                product.description,
-                parseFloat(product.price.toString())
-            )
-        );
-        return result;
+        if(products !== null && products !== undefined){
+            const result: ProductDTO[] = products.map((product: Product) =>
+                new ProductDTO(
+                    product.id,
+                    product.name,
+                    product.description,
+                    parseFloat(product.price.toString())
+                )
+            );
+            return result;
+        }
+        return null;
     }
 
     async getAllProducts(): Promise<ProductDTO[]> {
