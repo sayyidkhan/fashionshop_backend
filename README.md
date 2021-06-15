@@ -79,10 +79,9 @@ npm install ts-node-dev --save-dev
 ##### 3. install mysql into project <br>
 ```bash
 # allow hot reloading to work on project
-npm install ts-node-dev --save-dev
+npm install --save @nestjs/typeorm typeorm mysql2
 
 ```
-- npm install --save @nestjs/typeorm typeorm mysql2
 
 ## creating new module / controller / services
 ```bash
