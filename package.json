@@ -70,6 +70,10 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "coveragePathIgnorePatterns" : [
+      "<rootDir>/database_init.ts",
+      "<rootDir>/main.ts"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

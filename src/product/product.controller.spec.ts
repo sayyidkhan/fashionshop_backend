@@ -271,4 +271,54 @@ describe('ProductController', () => {
 
     });
 
+    describe("test - getProductByName()" , () => {
+        const param_name = "name";
+        const orderby_name_query = "orderby_name=asc";
+        const orderby_price_query = "orderby_price=asc";
+
+        it('test - param not used (positive scenario)', async () => {
+            const list = new ProductControllerMock().getProductDTOList();
+
+            mockProductService.getManyProductBy.mockResolvedValueOnce(list);
+            const res = await request(app.getHttpServer())
+                .get(`/product/filterby_name/${param_name}`)
+                .expect(200);
+            expect(res.status).toEqual(200);
+            expect(res.text.toString()).toContain(list[0].name);
+        });
+
+        it('test - 1 query used (orderby_name) (positive scenario)', async () => {
+            const list = new ProductControllerMock().getProductDTOList();
+
+            mockProductService.getManyProductBy.mockResolvedValueOnce(list);
+            const res = await request(app.getHttpServer())
+                .get(`/product/filterby_name/${param_name}?${orderby_name_query}`)
+                .expect(200);
+            expect(res.status).toEqual(200);
+            expect(res.text.toString()).toContain(list[0].name);
+        });
+
+        it('test - 2 query used (orderby_name,orderby_price) (positive scenario)', async () => {
+            const list = new ProductControllerMock().getProductDTOList();
+
+            mockProductService.getManyProductBy.mockResolvedValueOnce(list);
+            const res = await request(app.getHttpServer())
+                .get(`/product/filterby_name/${param_name}?${orderby_name_query}&${orderby_price_query}`)
+                .expect(200);
+            expect(res.status).toEqual(200);
+            expect(res.text.toString()).toContain(list[0].name);
+        });
+
+        it('test - param not used (negative scenario)', async () => {
+            mockProductService.getManyProductBy.mockResolvedValueOnce(null);
+            const res = await request(app.getHttpServer())
+                .get(`/product/filterby_name/${param_name}`)
+                .expect(404);
+            expect(res.status).toEqual(404);
+            expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
+        });
+
+
+    });
+
 });
