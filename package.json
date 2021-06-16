@@ -9,6 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "init:db" : "node database/insert_script.js",
     "dev": "ts-node-dev src/main.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -71,6 +72,7 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coveragePathIgnorePatterns" : [
+      "<rootDir>/.*\\.module.ts$",
       "<rootDir>/database_init.ts",
       "<rootDir>/main.ts"
     ],

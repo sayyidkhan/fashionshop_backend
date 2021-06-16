@@ -5,14 +5,16 @@ module.exports = {
     db: {
         host: "localhost",
         port : 3306,
+        /* change your username */
         username :  "root",
+        /* change your password */
         password : "rootroot",
         database : "fashionshop"
     },
     dataset_filename : "clothing_dataset.csv",
     swaggerOptions : {
         title : "FashionShop Backend API",
-        description : "API for backend catalog",
+        description : "API Endpoints for backend catalog",
         version: "1.0",
         product_api : "Product API",
         pagination_api : "Product Pagination API",

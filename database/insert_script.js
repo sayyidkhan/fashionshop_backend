@@ -3,10 +3,18 @@ const mysql = require('mysql2');
 const csv = require('csv-parser');
 const fs = require('fs');
 
+const table_name = 'product';
+const create_table_script = `
+CREATE TABLE ${table_name} (
+id           INT           NOT NULL AUTO_INCREMENT,
+name         CHAR(60)      NOT NULL DEFAULT '',
+description  VARCHAR(200)  NOT NULL DEFAULT '',
+price        DECIMAL(8,2)  NOT NULL DEFAULT 0.00,
+PRIMARY KEY  (id));
+`;
 
-
+//to be used to create database
 function initDB() {
-    const table_name = 'product';
     const database = config.db;
 
     //init database if not exist
@@ -31,15 +39,7 @@ function initDB() {
             if (err) throw err;
         });
         //4. create table
-        const create_table_query = `
-        CREATE TABLE ${table_name} (
-         id    INT  NOT NULL AUTO_INCREMENT,
-         name  CHAR(60)      NOT NULL DEFAULT '',
-         description  VARCHAR(200)   NOT NULL DEFAULT '',
-         price     DECIMAL(8,2)  NOT NULL DEFAULT 0.00,
-         PRIMARY KEY  (id));
-        `;
-        con.query(create_table_query, function (err, result) {
+        con.query(create_table_script, function (err, result) {
             if (err) throw err;
         });
         //5. insert records
