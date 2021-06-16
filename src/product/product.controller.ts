@@ -34,7 +34,7 @@ export class ProductController {
     @Get()
     async getAllProducts(): Promise<Promise<ProductDTO[]>> {
         const result: ProductDTO[] = await this.getProductsByCategoryAndSortBy("asc");
-        if(result.length !== 0) {
+        if(result !== null) {
             return result;
         }
         const errorMsg = ProductController.NO_PRODUCT_FOUND;
@@ -295,7 +295,6 @@ export class ProductController {
         if(orderby_price !== ""){
             query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
-
 
         //execute query
         const result = await this.productService.getManyProductBy(query);
