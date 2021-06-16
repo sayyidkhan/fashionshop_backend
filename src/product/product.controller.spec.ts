@@ -27,6 +27,7 @@ describe('ProductController', () => {
 
     const mockProductService = {
         getManyProductBy : jest.fn(),
+        getOneProduct : jest.fn(),
         createNewProduct : jest.fn()
     };
 
@@ -160,6 +161,32 @@ describe('ProductController', () => {
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name)
+        });
+
+    });
+
+    describe("test - getProductById()" , () => {
+
+        it('test - getProductById() (positive scenario)', async () => {
+            const product = new ProductControllerMock().getOneProduct();
+
+            mockProductService.getOneProduct.mockResolvedValueOnce(product);
+            const res = await request(app.getHttpServer())
+                .get('/product/filterby_id/' + product.id)
+                .expect(200);
+            expect(res.status).toEqual(200);
+            expect(res.text.toString()).toContain(product.name);
+        });
+
+        it('test - getProductById() (negative scenario)', async () => {
+            const product = new ProductControllerMock().getOneProduct();
+
+            mockProductService.getOneProduct.mockResolvedValueOnce(null);
+            const res = await request(app.getHttpServer())
+                .get('/product/filterby_id/' + product.id)
+                .expect(404);
+            expect(res.status).toEqual(404);
+            expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
         });
 
     });
