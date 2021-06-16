@@ -14,6 +14,9 @@ const config = require( 'config');
 export class ProductController {
     constructor(private readonly productService : ProductService) {}
 
+    static NO_PRODUCT_FOUND = "No Product(s) found";
+    static INVALID_INPUT = "Invalid Input";
+
 
     @ApiOperation({
         summary: 'Get All Products',
@@ -26,7 +29,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 400,
-        description: "No record found",
+        description: ProductController.NO_PRODUCT_FOUND,
     })
     @Get()
     async getAllProducts(): Promise<Promise<ProductDTO[]>> {
@@ -34,7 +37,7 @@ export class ProductController {
         if(result.length !== 0) {
             return result;
         }
-        const errorMsg = "No record found";
+        const errorMsg = ProductController.NO_PRODUCT_FOUND;
         throw new HttpException(
             errorMsg,
             HttpStatus.BAD_REQUEST
@@ -53,7 +56,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 400,
-        description: "Invalid Input",
+        description: ProductController.INVALID_INPUT,
     })
     @Post()
     async createNewProduct(@Body() productDto : CreateProductDTO) {
@@ -62,7 +65,7 @@ export class ProductController {
             const result = new ProductDTO(new_product.id,new_product.name,new_product.description,new_product.price);
             return result;
         }
-        const errorMsg = "Invalid Input";
+        const errorMsg = ProductController.INVALID_INPUT;
         throw new HttpException(
             errorMsg,
             HttpStatus.BAD_REQUEST
@@ -130,7 +133,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 404,
-        description: "Product ID not found.",
+        description: ProductController.NO_PRODUCT_FOUND,
     })
     @Get('/filterby_id/:id')
     async getProductById(@Param('id') _id: number) {
@@ -140,7 +143,7 @@ export class ProductController {
         if(result !== null) {
             return result;
         }
-        const errorMsg = "Product ID not found.";
+        const errorMsg = ProductController.NO_PRODUCT_FOUND;
         throw new HttpException(
             errorMsg,
             HttpStatus.NOT_FOUND
@@ -191,7 +194,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 404,
-        description: "No Product(s) found.",
+        description: ProductController.NO_PRODUCT_FOUND,
     })
     @Get("/filterby_price")
     async getProductByMinAndMaxPrice(
@@ -230,7 +233,7 @@ export class ProductController {
             return result;
         }
         else {
-            const errorMsg = "No Product(s) found.";
+            const errorMsg = ProductController.NO_PRODUCT_FOUND;
             throw new HttpException(
                 errorMsg,
                 HttpStatus.NOT_FOUND
@@ -264,6 +267,15 @@ export class ProductController {
         required: false,
         enum: ["asc","desc"]
     })
+    @ApiResponse({
+        status: 200,
+        description: 'Displays a list of all the products from the database with name filter(s) + sorted by choice(s) selected',
+        type: [ProductDTO],
+    })
+    @ApiResponse({
+        status: 404,
+        description: ProductController.NO_PRODUCT_FOUND,
+    })
     @Get("/filterby_name/:name")
     async getProductByName(
         @Param('name') _name : string,
@@ -291,7 +303,7 @@ export class ProductController {
             return result;
         }
         else {
-            const errorMsg = "No Product(s) found.";
+            const errorMsg = ProductController.NO_PRODUCT_FOUND;
             throw new HttpException(
                 errorMsg,
                 HttpStatus.NOT_FOUND

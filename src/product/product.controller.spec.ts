@@ -6,6 +6,7 @@ import {ProductModule} from "./product.module";
 import * as request from 'supertest';
 import {ProductDTO} from "./dto/productDTO";
 import {AppModule} from "../app.module";
+import exp = require("constants");
 
 class ProductControllerMock {
   getProductDTOList() {
@@ -59,16 +60,31 @@ describe('ProductController', () => {
     await testAppModule.close();
   });
 
-  it('get All products', async () => {
-    const list = new ProductControllerMock().getProductDTOList();
+  describe("test - getAllProducts()" , () => {
+    it('test - getAllProducts() (positive scenario)', async () => {
+      const list = new ProductControllerMock().getProductDTOList();
 
-    mockGetManyProductBy.mockResolvedValueOnce(list);
-    const res = await request(app.getHttpServer())
-        .get('/product/')
-        .expect(200);
-    expect(res.status).toEqual(200);
-    console.log(res.text);
+      mockGetManyProductBy.mockResolvedValueOnce(list);
+      const res = await request(app.getHttpServer())
+          .get('/product/')
+          .expect(200);
+      expect(res.status).toEqual(200);
+      expect(res.text.toString()).toContain(list[0].id)
+    });
+
+    it('test - getAllProducts() (negative scenario)', async () => {
+      const list = new ProductControllerMock().getProductDTOList();
+
+      mockGetManyProductBy.mockResolvedValueOnce(list);
+      const res = await request(app.getHttpServer())
+          .get('/product/')
+          .expect(400);
+      expect(res.status).toEqual(400);
+      expect(res.text.toString()).toContain(list[0].id)
+    });
   });
+
+
 
 
 });
