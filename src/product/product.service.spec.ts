@@ -3,17 +3,19 @@ import {ProductService} from './product.service';
 import {Product} from "./entity/product.entity";
 import {getRepositoryToken} from '@nestjs/typeorm';
 import {Repository} from "typeorm";
+import {CreateProductDTO} from "./dto/createProductDTO";
 
 class ProductServiceMock {
   getProductList() {
     const list = [
-      new Product(1,'red shirt','t-shirt',20.50)
+      this.getOneProduct(),
     ];
     return list;
   }
+  getOneProduct() {
+    return new Product(1,'red shirt','t-shirt',20.50);
+  }
 }
-
-
 
 describe('ProductService', () => {
   const token = getRepositoryToken(Product);
@@ -23,6 +25,8 @@ describe('ProductService', () => {
 
   const mockUsersRepository = {
     find : jest.fn(),
+    findOne : jest.fn(),
+    save : jest.fn(),
   }
 
   beforeEach(async () => {
@@ -54,12 +58,72 @@ describe('ProductService', () => {
     expect(service).toBeDefined();
   });
 
-  it("test - getManyProductsBy", async () => {
-    const productList = new ProductServiceMock().getProductList();
-    mockUsersRepository.find.mockResolvedValueOnce(productList);
+  describe("test - getManyProductsBy" , () => {
+      it("test - getManyProductsBy (positive scenario)", async () => {
+        const productList = new ProductServiceMock().getProductList();
+        mockUsersRepository.find.mockResolvedValueOnce(productList);
 
-    const result = await service.getManyProductBy({});
-    expect(result !== null).toBeTruthy();
+        const result = await service.getManyProductBy({});
+        expect(result).toEqual(productList);
+      });
+
+      it("test - getManyProductsBy (negative scenario - 1)", async () => {
+        mockUsersRepository.find.mockResolvedValueOnce(null);
+
+        const result = await service.getManyProductBy({});
+        expect(result).toEqual(null);
+      });
+
+    it("test - getManyProductsBy (negative scenario - 2)", async () => {
+      mockUsersRepository.find.mockResolvedValueOnce(undefined);
+
+      const result = await service.getManyProductBy({});
+      expect(result).toEqual(null);
+    });
+
+    it("test - getManyProductsBy (negative scenario - 3)", async () => {
+      mockUsersRepository.find.mockResolvedValueOnce([]);
+
+      const result = await service.getManyProductBy({});
+      expect(result).toEqual(null);
+    });
+  });
+
+  describe("test - getOneProduct" , () => {
+    it("test - getOneProduct (positive scenario)", async () => {
+      const oneProduct = new ProductServiceMock().getOneProduct();
+      mockUsersRepository.findOne.mockResolvedValueOnce(oneProduct);
+
+      const result = await service.getOneProduct({});
+      expect(result).toEqual(oneProduct);
+    });
+
+    it("test - getOneProduct (negative scenario - 1)", async () => {
+      mockUsersRepository.findOne.mockResolvedValueOnce(null);
+
+      const result = await service.getOneProduct({});
+      expect(result).toEqual(null);
+    });
+
+    it("test - getOneProduct (negative scenario - 2)", async () => {
+      mockUsersRepository.findOne.mockResolvedValueOnce(undefined);
+
+      const result = await service.getOneProduct({});
+      expect(result).toEqual(null);
+    });
+
+  });
+
+  describe("test - createNewProduct" , () => {
+    it("test - createNewProduct (scenario)", async () => {
+      const oneProduct = new ProductServiceMock().getOneProduct();
+      const mockData = new CreateProductDTO(oneProduct.name,oneProduct.description, parseFloat(oneProduct.price.toString()));
+      mockUsersRepository.save.mockResolvedValueOnce(oneProduct);
+
+      const result = await service.createNewProduct(mockData);
+      expect(result).toEqual(oneProduct);
+    });
+
   });
 
 });
