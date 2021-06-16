@@ -54,7 +54,9 @@ export abstract class ProductUtil {
     }
 
     private static verifyOverlappingMinMaxValue(minprice : number, maxprice : number) {
-        return (minprice >= maxprice);
+        let min = parseFloat(minprice.toString());
+        let max = parseFloat(maxprice.toString());
+        return (min >= max);
     }
 
 }

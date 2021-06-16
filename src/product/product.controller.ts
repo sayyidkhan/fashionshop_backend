@@ -16,6 +16,7 @@ export class ProductController {
 
     static NO_PRODUCT_FOUND = "No Product(s) found";
     static INVALID_INPUT = "Invalid Input";
+    static INVALID_PRICERANGE = "ERROR - Min price greater than or equal to Max Price.";
 
 
     @ApiOperation({
@@ -192,7 +193,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 400,
-        description: "ERROR - Min price greater than or equal to Max Price.",
+        description: ProductController.INVALID_PRICERANGE,
     })
     @ApiResponse({
         status: 404,
@@ -214,7 +215,7 @@ export class ProductController {
             query['where'] = [{price : myFunctionQuery }];
         }
         else if(validate === ProductUtil.ERROR_OVERLAPPINGPRICES) {
-            const errorMsg = "ERROR - Min price greater than or equal to Max Price.";
+            const errorMsg = ProductController.INVALID_PRICERANGE;
             throw new HttpException(
                 errorMsg,
                 HttpStatus.BAD_REQUEST

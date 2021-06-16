@@ -192,6 +192,7 @@ describe('ProductController', () => {
 
     describe("test - getProductById()" , () => {
         const minprice_query = "minprice=10";
+        const invalid_maxprice_query = "maxprice=9";
         const maxprice_query = "maxprice=80";
         const orderby_name_query = "orderby_name=asc";
         const orderby_price_query = "orderby_price=asc";
@@ -234,7 +235,7 @@ describe('ProductController', () => {
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${maxprice_query}&${maxprice_query}`)
+                .get(`/product/filterby_price?${minprice_query}&${maxprice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -245,7 +246,7 @@ describe('ProductController', () => {
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${maxprice_query}&${maxprice_query}&${orderby_name_query}&${orderby_price_query}`)
+                .get(`/product/filterby_price?${minprice_query}&${maxprice_query}&${orderby_name_query}&${orderby_price_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -258,6 +259,14 @@ describe('ProductController', () => {
                 .expect(404);
             expect(res.status).toEqual(404);
             expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
+        });
+
+        it('test - 2 query used(minprice,maxprice) (negative scenario) - to validate if invalid range throw error', async () => {
+            const res = await request(app.getHttpServer())
+                .get(`/product/filterby_price?${minprice_query}&${invalid_maxprice_query}`)
+                .expect(400);
+            expect(res.status).toEqual(400);
+            expect(res.text.toString()).toContain(ProductController.INVALID_PRICERANGE);
         });
 
     });
