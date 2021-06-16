@@ -78,6 +78,7 @@ export class ProductController {
         1.optional to pass {orderby_name} -> if passed as PARAM_QUERY will sort based on possible values\n
         2.optional to pass {orderby_price} -> if passed as PARAM_QUERY will sort based on possible values\n
         3.if multiple sort is specified, then it will be sorted by name then price.
+        4. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
         `,
     })
     @ApiQuery({
@@ -154,11 +155,12 @@ export class ProductController {
         summary: 'Get Products by filtering price + sorting',
         description: `
         get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting \n
-        {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input\n
-        {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
-        {orderby_name} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        {orderby_price} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        if orderby name + orderby_price is used, it will sort by name first then price second
+        1. {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input\n
+        2. {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
+        3. {orderby_name} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        4. {orderby_price} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        5. if orderby name + orderby_price is used, it will sort by name first then price second\n
+        6. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
         `,
     })
     @ApiQuery({
@@ -245,10 +247,11 @@ export class ProductController {
         summary: 'Get Products by filtering name + sorting',
         description: `
         get products by filtering name using the like clause + sorting \n
-        {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it\n
-        {orderby_name} - OPTIONAL PARAMETER, query will sort by name\n
-        {orderby_price} - OPTIONAL PARAMETER, query will sort by price\n
-        if orderby name + orderby_price is used, it will sort by name first then price second
+        1. {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it\n
+        2. {orderby_name} - OPTIONAL PARAMETER, query will sort by name\n
+        3. {orderby_price} - OPTIONAL PARAMETER, query will sort by price\n
+        4. if orderby name + orderby_price is used, it will sort by name first then price second
+        5. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
         `,
     })
     @ApiParam({
