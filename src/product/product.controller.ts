@@ -1,18 +1,11 @@
 import {Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query} from '@nestjs/common';
 import {ProductService} from "./product.service";
-import {
-    ApiBearerAuth,
-    ApiBody,
-    ApiOperation,
-    ApiParam,
-    ApiQuery,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import {ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags,} from '@nestjs/swagger';
 import {ProductDTO} from "./dto/productDTO";
 import {CreateProductDTO} from "./dto/createProductDTO";
 import {ProductUtil} from "../commonUtil/productUtil";
-import {Between, FindOperator, MoreThan, MoreThanOrEqual} from "typeorm";
+import {FindOperator, Like} from "typeorm";
+
 const config = require( 'config');
 
 @ApiBearerAuth()
@@ -162,7 +155,7 @@ export class ProductController {
         {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
         {orderby_name} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
         {orderby_price} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        if orderby name + price is used, it will sort by name first then price second
+        if orderby name + orderby_price is used, it will sort by name first then price second
         `,
     })
     @ApiQuery({
@@ -201,7 +194,7 @@ export class ProductController {
         description: "No Product(s) found.",
     })
     @Get("/filterby_price")
-    async getProducsByMinAndMaxPrice(
+    async getProductByMinAndMaxPrice(
         @Query('minprice') minPrice ?: number,
         @Query('maxprice') maxprice ?: number,
         @Query("orderby_name") orderby_name ?: string,
@@ -230,6 +223,67 @@ export class ProductController {
         if(orderby_price !== ""){
             query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
+
+        //execute query
+        const result = await this.productService.getManyProductBy(query);
+        if(result !== null) {
+            return result;
+        }
+        else {
+            const errorMsg = "No Product(s) found.";
+            throw new HttpException(
+                errorMsg,
+                HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    @ApiOperation({
+        summary: 'Get Products by filtering name + sorting',
+        description: `
+        get products by filtering name using the like clause + sorting \n
+        {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it\n
+        {orderby_name} - OPTIONAL PARAMETER, query will sort by name\n
+        {orderby_price} - OPTIONAL PARAMETER, query will sort by price\n
+        if orderby name + orderby_price is used, it will sort by name first then price second
+        `,
+    })
+    @ApiParam({
+        name: "name",
+        description: "name of the product -> will be filtered using like clause",
+    })
+    @ApiQuery({
+        name: "orderby_name",
+        description: "sorting order -> possible values: ( asc / desc )",
+        required: false,
+        enum: ["asc","desc"]
+    })
+    @ApiQuery({
+        name: "orderby_price",
+        description: "sorting order -> possible values: ( asc / desc )",
+        required: false,
+        enum: ["asc","desc"]
+    })
+    @Get("/filterby_name/:name")
+    async getProductByName(
+        @Param('name') _name : string,
+        @Query("orderby_name") orderby_name ?: string,
+        @Query("orderby_price") orderby_price ?: string) {
+        const query = {order : {}};
+        orderby_name = ProductUtil.validateUndefined(orderby_name);
+        orderby_price = ProductUtil.validateUndefined(orderby_price);
+
+        query['where'] = [{name : Like("%" + _name + "%") }];
+
+        //add sort by - name
+        if(orderby_name !== ""){
+            query.order["name"] = orderby_name.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        }
+        //add sort by - price
+        if(orderby_price !== ""){
+            query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        }
+
 
         //execute query
         const result = await this.productService.getManyProductBy(query);
