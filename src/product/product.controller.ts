@@ -12,6 +12,7 @@ import {
 import {ProductDTO} from "./dto/productDTO";
 import {CreateProductDTO} from "./dto/createProductDTO";
 import {ProductUtil} from "../commonUtil/productUtil";
+import {Between, FindOperator, MoreThan, MoreThanOrEqual} from "typeorm";
 const config = require( 'config');
 
 @ApiBearerAuth()
@@ -100,7 +101,7 @@ export class ProductController {
         description: 'Displays a list of all the products from the database sorted by choice(s) selected',
         type: [ProductDTO],
     })
-    @Get("/sort_by")
+    @Get("/sortby")
     async getProductsByCategoryAndSortBy(
         @Query("orderby_name") orderby_name ?: string,
         @Query("orderby_price") orderby_price ?: string) {
@@ -138,7 +139,7 @@ export class ProductController {
         status: 404,
         description: "Product ID not found.",
     })
-    @Get('/:id')
+    @Get('/filterby_id/:id')
     async getProductById(@Param('id') _id: number) {
         const result: ProductDTO = await this.productService.getOneProduct({
             where : [{"id" : _id }]
@@ -151,6 +152,97 @@ export class ProductController {
             errorMsg,
             HttpStatus.NOT_FOUND
         );
+    }
+
+    @ApiOperation({
+        summary: 'Get Products by filtering price + sorting',
+        description: `
+        get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting \n
+        {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input\n
+        {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
+        {orderby_name} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        {orderby_price} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        if orderby name + price is used, it will sort by name first then price second
+        `,
+    })
+    @ApiQuery({
+        name: "minprice",
+        description: "minimum price - cannot be less than 0",
+        required: false,
+    })
+    @ApiQuery({
+        name: "maxprice",
+        description: "maximum price - cannot be more than 9999",
+        required: false,
+    })
+    @ApiQuery({
+        name: "orderby_name",
+        description: "sorting order -> possible values: ( asc / desc )",
+        required: false,
+        enum: ["asc","desc"]
+    })
+    @ApiQuery({
+        name: "orderby_price",
+        description: "sorting order -> possible values: ( asc / desc )",
+        required: false,
+        enum: ["asc","desc"]
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Displays a list of all the products from the database with price filter(s) + sorted by choice(s) selected',
+        type: [ProductDTO],
+    })
+    @ApiResponse({
+        status: 400,
+        description: "ERROR - Min price greater than or equal to Max Price.",
+    })
+    @ApiResponse({
+        status: 404,
+        description: "No Product(s) found.",
+    })
+    @Get("/filterby_price")
+    async getProducsByMinAndMaxPrice(
+        @Query('minprice') minPrice ?: number,
+        @Query('maxprice') maxprice ?: number,
+        @Query("orderby_name") orderby_name ?: string,
+        @Query("orderby_price") orderby_price ?: string) {
+        const query = {order : {}};
+        const validate = ProductUtil.verifyMinMaxValueError(minPrice,maxprice);
+        orderby_name = ProductUtil.validateUndefined(orderby_name);
+        orderby_price = ProductUtil.validateUndefined(orderby_price);
+        //verify if where clause required to be implemented - NO ERROR will be successfully implemented
+        if(validate === ProductUtil.NO_ERROR) {
+            const myFunctionQuery: FindOperator<number> = ProductUtil.defineMinMaxValueFunction(minPrice,maxprice);
+            query['where'] = [{price : myFunctionQuery }];
+        }
+        else if(validate === ProductUtil.ERROR_OVERLAPPINGPRICES) {
+            const errorMsg = "ERROR - Min price greater than or equal to Max Price.";
+            throw new HttpException(
+                errorMsg,
+                HttpStatus.BAD_REQUEST
+            );
+        }
+        //add sort by - name
+        if(orderby_name !== ""){
+            query.order["name"] = orderby_name.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        }
+        //add sort by - price
+        if(orderby_price !== ""){
+            query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        }
+
+        //execute query
+        const result = await this.productService.getManyProductBy(query);
+        if(result !== null) {
+            return result;
+        }
+        else {
+            const errorMsg = "No Product(s) found.";
+            throw new HttpException(
+                errorMsg,
+                HttpStatus.NOT_FOUND
+            );
+        }
     }
 
 }
