@@ -76,20 +76,20 @@ export class ProductController {
     @ApiOperation({
         summary: 'Get All Products + Sorting',
         description: `
-        1.optional to pass {orderby_name} -> if passed as PARAM_QUERY will sort based on possible values\n
-        2.optional to pass {orderby_price} -> if passed as PARAM_QUERY will sort based on possible values\n
+        1.optional to pass {orderByName} -> if passed as PARAM_QUERY will sort based on possible values\n
+        2.optional to pass {orderByPrice} -> if passed as PARAM_QUERY will sort based on possible values\n
         3.if multiple sort is specified, then it will be sorted by name then price.
-        4. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
+        4. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
     })
     @ApiQuery({
-        name: "orderby_name",
+        name: "orderByName",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
     })
     @ApiQuery({
-        name: "orderby_price",
+        name: "orderByPrice",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
@@ -101,16 +101,16 @@ export class ProductController {
     })
     @Get("/sortby")
     async getProductsByCategoryAndSortBy(
-        @Query("orderby_name") orderby_name ?: string,
-        @Query("orderby_price") orderby_price ?: string) {
-        orderby_name = ProductUtil.validateUndefined(orderby_name);
-        orderby_price = ProductUtil.validateUndefined(orderby_price);
+        @Query("orderByName") orderByName ?: string,
+        @Query("orderByPrice") orderByPrice ?: string) {
+        orderByName = ProductUtil.validateUndefined(orderByName);
+        orderByPrice = ProductUtil.validateUndefined(orderByPrice);
         const query = { order : {}};
-        if(orderby_name !== ""){
-            query.order["name"] = orderby_name.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByName !== ""){
+            query.order["name"] = orderByName.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
-        if(orderby_price !== ""){
-            query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByPrice !== ""){
+            query.order["price"] = orderByPrice.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
         return this.productService.getManyProductBy(query);
     }
@@ -137,7 +137,7 @@ export class ProductController {
         status: 404,
         description: ProductController.NO_PRODUCT_FOUND,
     })
-    @Get('/filterby_id/:id')
+    @Get('/filterById/:id')
     async getProductById(@Param('id') _id: number) {
         const result: ProductDTO = await this.productService.getOneProduct({
             where : [{"id" : _id }]
@@ -158,10 +158,10 @@ export class ProductController {
         get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting \n
         1. {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input\n
         2. {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
-        3. {orderby_name} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        4. {orderby_price} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        5. if orderby name + orderby_price is used, it will sort by name first then price second\n
-        6. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
+        3. {orderByName} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        4. {orderByPrice} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
+        5. if orderby name + orderByPrice is used, it will sort by name first then price second\n
+        6. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
     })
     @ApiQuery({
@@ -175,13 +175,13 @@ export class ProductController {
         required: false,
     })
     @ApiQuery({
-        name: "orderby_name",
+        name: "orderByName",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
     })
     @ApiQuery({
-        name: "orderby_price",
+        name: "orderByPrice",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
@@ -199,16 +199,16 @@ export class ProductController {
         status: 404,
         description: ProductController.NO_PRODUCT_FOUND,
     })
-    @Get("/filterby_price")
+    @Get("/filterByPrice")
     async getProductByMinAndMaxPrice(
         @Query('minprice') minPrice ?: number,
         @Query('maxprice') maxprice ?: number,
-        @Query("orderby_name") orderby_name ?: string,
-        @Query("orderby_price") orderby_price ?: string) {
+        @Query("orderByName") orderByName ?: string,
+        @Query("orderByPrice") orderByPrice ?: string) {
         const query = {order : {}};
         const validate = ProductUtil.verifyMinMaxValueError(minPrice,maxprice);
-        orderby_name = ProductUtil.validateUndefined(orderby_name);
-        orderby_price = ProductUtil.validateUndefined(orderby_price);
+        orderByName = ProductUtil.validateUndefined(orderByName);
+        orderByPrice = ProductUtil.validateUndefined(orderByPrice);
         //verify if where clause required to be implemented - NO ERROR will be successfully implemented
         if(validate === ProductUtil.NO_ERROR) {
             const myFunctionQuery: FindOperator<number> = ProductUtil.defineMinMaxValueFunction(minPrice,maxprice);
@@ -222,12 +222,12 @@ export class ProductController {
             );
         }
         //add sort by - name
-        if(orderby_name !== ""){
-            query.order["name"] = orderby_name.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByName !== ""){
+            query.order["name"] = orderByName.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
         //add sort by - price
-        if(orderby_price !== ""){
-            query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByPrice !== ""){
+            query.order["price"] = orderByPrice.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
 
         //execute query
@@ -249,10 +249,10 @@ export class ProductController {
         description: `
         get products by filtering name using the like clause + sorting \n
         1. {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it\n
-        2. {orderby_name} - OPTIONAL PARAMETER, query will sort by name\n
-        3. {orderby_price} - OPTIONAL PARAMETER, query will sort by price\n
-        4. if orderby name + orderby_price is used, it will sort by name first then price second
-        5. if other values is provided to orderby_name / orderby_price, it will disregard the value and sort it in asc
+        2. {orderByName} - OPTIONAL PARAMETER, query will sort by name\n
+        3. {orderByPrice} - OPTIONAL PARAMETER, query will sort by price\n
+        4. if orderby name + orderByPrice is used, it will sort by name first then price second
+        5. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
     })
     @ApiParam({
@@ -260,13 +260,13 @@ export class ProductController {
         description: "name of the product -> will be filtered using like clause",
     })
     @ApiQuery({
-        name: "orderby_name",
+        name: "orderByName",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
     })
     @ApiQuery({
-        name: "orderby_price",
+        name: "orderByPrice",
         description: "sorting order -> possible values: ( asc / desc )",
         required: false,
         enum: ["asc","desc"]
@@ -280,24 +280,24 @@ export class ProductController {
         status: 404,
         description: ProductController.NO_PRODUCT_FOUND,
     })
-    @Get("/filterby_name/:name")
+    @Get("/filterByName/:name")
     async getProductByName(
         @Param('name') _name : string,
-        @Query("orderby_name") orderby_name ?: string,
-        @Query("orderby_price") orderby_price ?: string) {
+        @Query("orderByName") orderByName ?: string,
+        @Query("orderByPrice") orderByPrice ?: string) {
         const query = {order : {}};
-        orderby_name = ProductUtil.validateUndefined(orderby_name);
-        orderby_price = ProductUtil.validateUndefined(orderby_price);
+        orderByName = ProductUtil.validateUndefined(orderByName);
+        orderByPrice = ProductUtil.validateUndefined(orderByPrice);
 
         query['where'] = [{name : Like("%" + _name + "%") }];
 
         //add sort by - name
-        if(orderby_name !== ""){
-            query.order["name"] = orderby_name.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByName !== ""){
+            query.order["name"] = orderByName.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
         //add sort by - price
-        if(orderby_price !== ""){
-            query.order["price"] = orderby_price.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
+        if(orderByPrice !== ""){
+            query.order["price"] = orderByPrice.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
 
         //execute query

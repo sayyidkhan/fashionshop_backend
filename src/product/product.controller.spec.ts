@@ -80,8 +80,8 @@ describe('ProductController', () => {
             mockProductService.getManyProductBy.mockResolvedValueOnce(null);
             const res = await request(app.getHttpServer())
                 .get('/product/')
-                .expect(400);
-            expect(res.status).toEqual(400);
+                .expect(404);
+            expect(res.status).toEqual(404);
             expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
         });
 
@@ -117,6 +117,8 @@ describe('ProductController', () => {
     });
 
     describe("test - getProductsByCategoryAndSortBy()" , () => {
+        const orderByName = "orderByName=desc";
+        const orderByPrice = "orderByPrice=asc";
 
         it('test - no query provided (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
@@ -129,34 +131,34 @@ describe('ProductController', () => {
             expect(res.text.toString()).toContain(list[0].name)
         });
 
-        it('test - 1 query used(orderby_name) (positive scenario)', async () => {
+        it(`test - 1 query used(${orderByName}) (positive scenario)`, async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get('/product/sortby?orderby_name=desc')
+                .get('/product/sortby?' + orderByName)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name)
         });
 
-        it('test - 1 query used(orderby_price) (positive scenario)', async () => {
+        it(`test - 1 query used(${orderByPrice}) (positive scenario)`, async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get('/product/sortby?orderby_price=desc')
+                .get('/product/sortby?' + orderByPrice)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name)
         });
 
-        it('test - 2 query(s) used(orderby_name,orderby_price) (positive scenario)', async () => {
+        it(`test - 2 query(s) used(${orderByName},${orderByPrice}) (positive scenario)`, async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get('/product/sortby?orderby_price=desc&orderby_name=asc')
+                .get('/product/sortby?'+ orderByName + "&" + orderByPrice)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name)
@@ -171,7 +173,7 @@ describe('ProductController', () => {
 
             mockProductService.getOneProduct.mockResolvedValueOnce(product);
             const res = await request(app.getHttpServer())
-                .get('/product/filterby_id/' + product.id)
+                .get('/product/filterById/' + product.id)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(product.name);
@@ -182,7 +184,7 @@ describe('ProductController', () => {
 
             mockProductService.getOneProduct.mockResolvedValueOnce(null);
             const res = await request(app.getHttpServer())
-                .get('/product/filterby_id/' + product.id)
+                .get('/product/filterById/' + product.id)
                 .expect(404);
             expect(res.status).toEqual(404);
             expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
@@ -194,15 +196,15 @@ describe('ProductController', () => {
         const minprice_query = "minprice=10";
         const invalid_maxprice_query = "maxprice=9";
         const maxprice_query = "maxprice=80";
-        const orderby_name_query = "orderby_name=asc";
-        const orderby_price_query = "orderby_price=asc";
+        const orderByName_query = "orderByName=asc";
+        const orderByPrice_query = "orderByPrice=asc";
 
         it('test - 0 query used (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get('/product/filterby_price')
+                .get('/product/filterByPrice')
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -213,7 +215,7 @@ describe('ProductController', () => {
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${minprice_query}`)
+                .get(`/product/filterByPrice?${minprice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -224,7 +226,7 @@ describe('ProductController', () => {
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${maxprice_query}`)
+                .get(`/product/filterByPrice?${maxprice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -235,27 +237,27 @@ describe('ProductController', () => {
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${minprice_query}&${maxprice_query}`)
+                .get(`/product/filterByPrice?${minprice_query}&${maxprice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
         });
 
-        it('test - 4 query used (minprice,maxprice,orderby_name,orderby_price) (positive scenario)', async () => {
+        it('test - 4 query used (minprice,maxprice,orderByName,orderByPrice) (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${minprice_query}&${maxprice_query}&${orderby_name_query}&${orderby_price_query}`)
+                .get(`/product/filterByPrice?${minprice_query}&${maxprice_query}&${orderByName_query}&${orderByPrice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
         });
 
-        it('test - (negative scenario)', async () => {
+        it('test - no product found (negative scenario)', async () => {
             mockProductService.getManyProductBy.mockResolvedValueOnce(null);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price`)
+                .get(`/product/filterByPrice`)
                 .expect(404);
             expect(res.status).toEqual(404);
             expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
@@ -263,7 +265,7 @@ describe('ProductController', () => {
 
         it('test - 2 query used(minprice,maxprice) (negative scenario) - to validate if invalid range throw error', async () => {
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_price?${minprice_query}&${invalid_maxprice_query}`)
+                .get(`/product/filterByPrice?${minprice_query}&${invalid_maxprice_query}`)
                 .expect(400);
             expect(res.status).toEqual(400);
             expect(res.text.toString()).toContain(ProductController.INVALID_PRICERANGE);
@@ -273,37 +275,37 @@ describe('ProductController', () => {
 
     describe("test - getProductByName()" , () => {
         const param_name = "name";
-        const orderby_name_query = "orderby_name=asc";
-        const orderby_price_query = "orderby_price=asc";
+        const orderByName_query = "orderByName=asc";
+        const orderByPrice_query = "orderByPrice=asc";
 
         it('test - param not used (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_name/${param_name}`)
+                .get(`/product/filterByName/${param_name}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
         });
 
-        it('test - 1 query used (orderby_name) (positive scenario)', async () => {
+        it('test - 1 query used (orderByName) (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_name/${param_name}?${orderby_name_query}`)
+                .get(`/product/filterByName/${param_name}?${orderByName_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
         });
 
-        it('test - 2 query used (orderby_name,orderby_price) (positive scenario)', async () => {
+        it('test - 2 query used (orderByName,orderByPrice) (positive scenario)', async () => {
             const list = new ProductControllerMock().getProductDTOList();
 
             mockProductService.getManyProductBy.mockResolvedValueOnce(list);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_name/${param_name}?${orderby_name_query}&${orderby_price_query}`)
+                .get(`/product/filterByName/${param_name}?${orderByName_query}&${orderByPrice_query}`)
                 .expect(200);
             expect(res.status).toEqual(200);
             expect(res.text.toString()).toContain(list[0].name);
@@ -312,7 +314,7 @@ describe('ProductController', () => {
         it('test - param not used (negative scenario)', async () => {
             mockProductService.getManyProductBy.mockResolvedValueOnce(null);
             const res = await request(app.getHttpServer())
-                .get(`/product/filterby_name/${param_name}`)
+                .get(`/product/filterByName/${param_name}`)
                 .expect(404);
             expect(res.status).toEqual(404);
             expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND);
