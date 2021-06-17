@@ -47,7 +47,7 @@ export class ProductController {
 
     @ApiOperation({
         summary: 'Insert a new Product listing',
-        description: "Insert a new Product Object that needs to be added to the product listing, no parameters required to by passed.",
+        description: "Insert a new Product Object that needs to be added to the product listing, no parameters required to be passed.",
     })
     @ApiBody({ type: CreateProductDTO })
     @ApiResponse({
