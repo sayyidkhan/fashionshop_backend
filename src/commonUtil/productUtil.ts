@@ -59,4 +59,6 @@ export abstract class ProductUtil {
         return (min >= max);
     }
 
+
+
 }

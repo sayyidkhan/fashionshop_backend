@@ -29,7 +29,7 @@ export class ProductController {
         type: [ProductDTO],
     })
     @ApiResponse({
-        status: 400,
+        status: 404,
         description: ProductController.NO_PRODUCT_FOUND,
     })
     @Get()
@@ -41,7 +41,7 @@ export class ProductController {
         const errorMsg = ProductController.NO_PRODUCT_FOUND;
         throw new HttpException(
             errorMsg,
-            HttpStatus.BAD_REQUEST
+            HttpStatus.NOT_FOUND
         );
     }
 
