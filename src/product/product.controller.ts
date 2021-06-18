@@ -29,7 +29,7 @@ export class ProductController {
     })
     @ApiResponse({
         status: 200,
-        description: 'Displays a list of all the products from the database sorted by title from [A - Z] & price from lowest to highest',
+        description: 'Displays a list of all the products from the database sorted by title from [A - Z]',
         type: [ProductDTO],
     })
     @ApiResponse({

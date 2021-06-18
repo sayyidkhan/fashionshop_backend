@@ -20,7 +20,7 @@ abstract class PaginationMetadata {
     @ApiProperty({
         description : "returns the itemPerPage limit",
         minimum : 10,
-        maximum : 100,
+        maximum : 50,
         default: 50,
         type : Number,
     })

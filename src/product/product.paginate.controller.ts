@@ -4,7 +4,6 @@ import {ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags,} 
 import {ProductController} from "./product.controller";
 import {PaginationUtil} from "../commonUtil/paginationUtil";
 import {PaginationProductDTO} from "./dto/PaginationProductDTO";
-import {ProductDTO} from "./dto/productDTO";
 
 const config = require( 'config');
 
@@ -60,7 +59,7 @@ export class ProductPaginateController {
     })
     @ApiResponse({
         status: 200,
-        description: 'Displays a list of all the products in PaginationProductDTO sorted by title from [A - Z] & price from lowest to highest',
+        description: 'Displays a list of all the products in PaginationProductDTO sorted by title from [A - Z]4',
         type: [PaginationProductDTO],
     })
     @ApiResponse({
@@ -122,7 +121,7 @@ export class ProductPaginateController {
     @ApiResponse({
         status: 200,
         description: 'Displays a list of all the products from the database sorted by choice(s) selected',
-        type: [ProductDTO],
+        type: [PaginationProductDTO],
     })
     @ApiResponse({
         status: 400,
@@ -149,6 +148,13 @@ export class ProductPaginateController {
         description: `
         get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting with pagination
         
+        ####### Required Parameters #########
+        1.required QUERY_PARAM {currentPage} -> specify the current page
+        2.required QUERY_PARAM {itemPerPage} -> specify the max item per page
+        Available metadata returned: (currentPage, itemPerPage, totalItems, totalPages)
+        returns a list of ProductDTO object for the current page selected
+        
+        ####### Optional Parameters #########
         1. {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input
         2. {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input
         3. {orderByName} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)
@@ -190,7 +196,7 @@ export class ProductPaginateController {
     @ApiResponse({
         status: 200,
         description: 'Displays a list of all the products from the database with price filter(s) + sorted by choice(s) selected',
-        type: [ProductDTO],
+        type: [PaginationProductDTO],
     })
     @ApiResponse({
         status: 400,
@@ -219,11 +225,19 @@ export class ProductPaginateController {
         description: `
         get products by filtering name using the like clause + sorting with pagination
         
-        1. {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it
-        2. {orderByName} - OPTIONAL PARAMETER, query will sort by name
-        3. {orderByPrice} - OPTIONAL PARAMETER, query will sort by price
-        4. if orderby name + orderByPrice is used, it will sort by name first then price second
-        5. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
+        ####### Required Parameters #########
+        1.required QUERY_PARAM {currentPage} -> specify the current page
+        2.required QUERY_PARAM {itemPerPage} -> specify the max item per page
+        Available metadata returned: (currentPage, itemPerPage, totalItems, totalPages)
+        returns a list of ProductDTO object for the current page selected
+        
+        ####### Optional Parameters #########
+        3. {minprice} - OPTIONAL_PARAMETER, query will still work w/o min price input
+        4. {maxprice) - OPTIONAL_PARAMETER, query will still work w/o max price input
+        5. {orderByName} - OPTIONAL PARAMETER, query will sort by name
+        6. {orderByPrice} - OPTIONAL PARAMETER, query will sort by price
+        7. if orderby name + orderByPrice is used, it will sort by name first then price second
+        8. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
     })
     @ApiParam({
@@ -253,7 +267,7 @@ export class ProductPaginateController {
     @ApiResponse({
         status: 200,
         description: 'Displays a list of all the products from the database with name filter(s) + sorted by choice(s) selected',
-        type: [ProductDTO],
+        type: [PaginationProductDTO],
     })
     @ApiResponse({
         status: 400,
