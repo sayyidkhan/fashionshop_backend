@@ -5,8 +5,6 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {ProductPaginateController} from "./product.paginate.controller";
 import * as request from 'supertest';
 import {Product} from "./entity/product.entity";
-import {PaginationUtil} from "../commonUtil/paginationUtil";
-import mock = jest.mock;
 
 class ProductPaginateControllerMock {
     getProductDTOList() {
@@ -40,7 +38,8 @@ describe('ProductController', () => {
                 {
                     provide: ProductService,
                     useValue: mockProductService
-                }
+                },
+                ProductController,
             ]
         }).compile();
 
@@ -70,6 +69,21 @@ describe('ProductController', () => {
 
     const currentPage = "currentPage=1";
     const itemPerPage = "itemPerPage=10";
+
+    describe("test - paginateRecords()", () => {
+
+        it("paginateRecords() negative scenario", () => {
+            expect(() => {
+                new ProductPaginateController(service).paginateRecords(null,0,0);
+            }).toThrow(ProductController.NO_PRODUCT_FOUND);
+        });
+
+        it("paginateRecords() positive scenario", () => {
+            const res = new ProductPaginateController(service).paginateRecords([[1,2,3],[4,5,6]],1,3);
+            expect(res.currentPage).toEqual(1);
+        });
+
+    });
 
     describe("test - getAllProducts()" , () => {
 

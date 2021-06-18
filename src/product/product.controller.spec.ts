@@ -164,6 +164,15 @@ describe('ProductController', () => {
             expect(res.text.toString()).toContain(list[0].name)
         });
 
+        it('test - no query provided (negative scenario)', async () => {
+            service.getManyProductBy = jest.fn().mockResolvedValueOnce(null);
+            const res = await request(app.getHttpServer())
+                .get('/product/sortby')
+                .expect(404);
+            expect(res.status).toEqual(404);
+            expect(res.text.toString()).toContain(ProductController.NO_PRODUCT_FOUND)
+        });
+
     });
 
     describe("test - getProductById()" , () => {

@@ -39,14 +39,7 @@ export class ProductController {
     @Get()
     async getAllProducts(): Promise<Promise<ProductDTO[]>> {
         const result: ProductDTO[] = await this.getProductsByCategoryAndSortBy("asc");
-        if(result !== null) {
-            return result;
-        }
-        const errorMsg = ProductController.NO_PRODUCT_FOUND;
-        throw new HttpException(
-            errorMsg,
-            HttpStatus.NOT_FOUND
-        );
+        return result;
     }
 
     @ApiOperation({
@@ -126,7 +119,7 @@ export class ProductController {
         if(orderByPrice !== ""){
             query.order["price"] = orderByPrice.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
-        const result = this.productService.getManyProductBy(query);
+        const result = await this.productService.getManyProductBy(query);
         if(result !== null) {
             return result;
         }

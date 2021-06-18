@@ -16,8 +16,7 @@ export class ProductPaginateController {
 
     static PAGE_NO_EXCEED =  "ERROR: Page number query exceeds available page range.";
 
-    private paginateRecords(products : any[], _currentPage : number, _itemPerPage : number) {
-        _itemPerPage = PaginationUtil.pageLimit(_itemPerPage);
+    paginateRecords(products : any[], _currentPage : number, _itemPerPage : number) {
         if(products !== null) {
             let result;
             try {

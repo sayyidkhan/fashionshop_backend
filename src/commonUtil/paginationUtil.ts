@@ -31,14 +31,15 @@ export abstract class PaginationUtil {
         }
     }
 
-    public static getPaginatedList(mylist : any[], _currentPage : number, itemPerPage : number) {
+    public static getPaginatedList(mylist : any[], _currentPage : number, _itemPerPage : number) {
+        _itemPerPage = PaginationUtil.pageLimit(_itemPerPage);
         _currentPage = _currentPage <= 0 ? 1 : parseInt(_currentPage.toString());
-        const nestedList = this.convertListIntoNestedList(mylist,itemPerPage);
+        const nestedList = this.convertListIntoNestedList(mylist,_itemPerPage);
         const data = this.getByPageNumber(nestedList,_currentPage);
         if(nestedList !== null) {
             const totalItems = mylist.length;
             const totalPages = nestedList.length;
-            const result = new PaginationProductDTO(data,_currentPage,itemPerPage,totalItems,totalPages);
+            const result = new PaginationProductDTO(data,_currentPage,_itemPerPage,totalItems,totalPages);
             return result;
         }
         return null;
