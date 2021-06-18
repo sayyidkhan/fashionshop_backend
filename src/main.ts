@@ -2,6 +2,7 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from './app.module'
 import {SwaggerModule, DocumentBuilder} from "@nestjs/swagger";
 import initDB from "./database_init";
+import {ProductModule} from "./product/product.module";
 
 const config = require( 'config');
 const cors = require("cors");
@@ -27,7 +28,10 @@ async function bootstrap() {
       .addTag(config.swaggerOptions.product_api)
       .addTag(config.swaggerOptions.pagination_api)
       .build();
-  const document = SwaggerModule.createDocument(app,options);
+  const document = SwaggerModule.createDocument(app,options, {
+    /* add your modules here to list your API dynamically in the project */
+    include : [ProductModule],
+  });
   SwaggerModule.setup(config.swaggerOptions.swagger_api_url,app,document);
 
   /* start app */

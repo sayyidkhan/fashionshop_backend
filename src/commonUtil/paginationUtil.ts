@@ -1,8 +1,8 @@
 import {PaginationProductDTO} from "../product/dto/PaginationProductDTO";
+import {ProductPaginateController} from "../product/product.paginate.controller";
 
 export abstract class PaginationUtil {
 
-    static PAGE_NO_EXCEED =  "ERROR: Page number query exceeds available page range.";
 
     private static convertListIntoNestedList(mylist : any[],pagelimit : number) {
         if(pagelimit <= 0) {
@@ -24,7 +24,7 @@ export abstract class PaginationUtil {
         }
         if(page > nestedlist.length) {
             console.log("page no exceed");
-            throw new Error(this.PAGE_NO_EXCEED);
+            throw new Error(ProductPaginateController.PAGE_NO_EXCEED);
         }
         else {
             return nestedlist[page - 1];
@@ -32,10 +32,10 @@ export abstract class PaginationUtil {
     }
 
     public static getPaginatedList(mylist : any[], _currentPage : number, itemPerPage : number) {
+        _currentPage = _currentPage <= 0 ? 1 : parseInt(_currentPage.toString());
         const nestedList = this.convertListIntoNestedList(mylist,itemPerPage);
         const data = this.getByPageNumber(nestedList,_currentPage);
         if(nestedList !== null) {
-            _currentPage = _currentPage <= 0 ? 1 : parseInt(_currentPage.toString());
             const totalItems = mylist.length;
             const totalPages = nestedList.length;
             const result = new PaginationProductDTO(data,_currentPage,itemPerPage,totalItems,totalPages);

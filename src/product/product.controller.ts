@@ -21,7 +21,11 @@ export class ProductController {
 
     @ApiOperation({
         summary: 'Get All Products',
-        description: "No parameters are required to be passed in order to use this api",
+        description: `
+         Get all the records w/o sorting or any pagination involved
+        
+         No parameters are required to be passed in order to use this api
+        `,
     })
     @ApiResponse({
         status: 200,
@@ -47,7 +51,11 @@ export class ProductController {
 
     @ApiOperation({
         summary: 'Insert a new Product listing',
-        description: "Insert a new Product Object that needs to be added to the product listing, no parameters required to be passed.",
+        description: `
+        Insert a new Product Object that needs to be added to the product listing.
+         
+        No parameters required to be passed.
+        `,
     })
     @ApiBody({ type: CreateProductDTO })
     @ApiResponse({
@@ -76,8 +84,10 @@ export class ProductController {
     @ApiOperation({
         summary: 'Get All Products + Sorting',
         description: `
-        1.optional to pass {orderByName} -> if passed as PARAM_QUERY will sort based on possible values\n
-        2.optional to pass {orderByPrice} -> if passed as PARAM_QUERY will sort based on possible values\n
+        Get all the records + allows single or multiple sorting
+        
+        1.optional to pass {orderByName} -> if passed as PARAM_QUERY will sort based on possible values
+        2.optional to pass {orderByPrice} -> if passed as PARAM_QUERY will sort based on possible values
         3.if multiple sort is specified, then it will be sorted by name then price.
         4. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
@@ -99,6 +109,10 @@ export class ProductController {
         description: 'Displays a list of all the products from the database sorted by choice(s) selected',
         type: [ProductDTO],
     })
+    @ApiResponse({
+        status: 404,
+        description: ProductController.NO_PRODUCT_FOUND + ", No Record in database.",
+    })
     @Get("/sortby")
     async getProductsByCategoryAndSortBy(
         @Query("orderByName") orderByName ?: string,
@@ -112,15 +126,27 @@ export class ProductController {
         if(orderByPrice !== ""){
             query.order["price"] = orderByPrice.toUpperCase() === "DESC" ? 'DESC' : 'ASC';
         }
-        return this.productService.getManyProductBy(query);
+        const result = this.productService.getManyProductBy(query);
+        if(result !== null) {
+            return result;
+        }
+        else {
+            throw new HttpException(
+                ProductController.NO_PRODUCT_FOUND,
+                HttpStatus.NOT_FOUND
+            );
+        }
+
     }
 
     @ApiOperation({
         summary: 'Get One Product by ID only',
         description: `
-        get one product by ID, only numbers(integer) are accepted. if product id does not exist will return a 404 error.\n
-        currently data preparation ID (1 - 500) are valid records.\n
-        ID 501 and above have not exist yet unless added.\n
+        get one product by ID, only numbers(integer) are accepted.
+        
+        if product id does not exist will return a 404 error.
+        currently data preparation ID (1 - 500) are valid records.
+        ID 501 and above have not exist yet unless added.
         can use the data based on the scenarios.
         `,
     })
@@ -155,12 +181,13 @@ export class ProductController {
     @ApiOperation({
         summary: 'Get Products by filtering price + sorting',
         description: `
-        get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting \n
-        1. {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input\n
-        2. {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input\n
-        3. {orderByName} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        4. {orderByPrice} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)\n
-        5. if orderby name + orderByPrice is used, it will sort by name first then price second\n
+        get products by filtering price (within min - max range) or (>= min) or (<= max) then sorting
+        
+        1. {minprice} - OPTIONAL PARAMETER, query will still work w/o min price input
+        2. {maxprice} - OPTIONAL PARAMETER, query will still work w/o max price input
+        3. {orderByName} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)
+        4. {orderByPrice} - OPTIONAL PARAMETER, query will still work even w/o processing (min or max price or both)
+        5. if orderby name + orderByPrice is used, it will sort by name first then price second
         6. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
     })
@@ -247,10 +274,11 @@ export class ProductController {
     @ApiOperation({
         summary: 'Get Products by filtering name + sorting',
         description: `
-        get products by filtering name using the like clause + sorting \n
-        1. {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it\n
-        2. {orderByName} - OPTIONAL PARAMETER, query will sort by name\n
-        3. {orderByPrice} - OPTIONAL PARAMETER, query will sort by price\n
+        get products by filtering name using the like clause + sorting
+        
+        1. {name} - REQUIRED PARAMETER, query will search for name of product and returns the product name which has the text name in it
+        2. {orderByName} - OPTIONAL PARAMETER, query will sort by name
+        3. {orderByPrice} - OPTIONAL PARAMETER, query will sort by price
         4. if orderby name + orderByPrice is used, it will sort by name first then price second
         5. if other values is provided to orderByName / orderByPrice, it will disregard the value and sort it in asc
         `,
