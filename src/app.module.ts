@@ -18,7 +18,7 @@ const database = config.db;
       password: database.password,
       database: database.database,
       entities: [Product],
-      synchronize: true,
+      synchronize: false,
       logging : false,
     }),
     ProductModule,
