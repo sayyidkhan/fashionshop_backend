@@ -1,4 +1,4 @@
-# Fahsionshop Backend Endpoints
+# Fashionshop Backend Endpoints
 
 ## Documentation:
 
